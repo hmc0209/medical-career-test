@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>医療キャリア適性チェック｜高校生向け</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f0f9ff;
+        }
+        .progress-bar {
+            transition: width 0.3s ease-in-out;
+        }
+        .fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .char-img-container {
+            width: 160px;
+            height: 160px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .char-svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+            transition: transform 0.3s ease;
+        }
+        .char-svg:hover {
+            transform: scale(1.05);
+        }
+        /* 度合い選択ボタンのスタイル */
+        .scale-btn {
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .scale-btn:active {
+            transform: scale(0.85);
+        }
+        /* ボタンをグラデーションで美しく */
+        .btn-agree { border-color: #60a5fa; background-color: #eff6ff; }
+        .btn-agree:hover { background-color: #60a5fa; }
+        .btn-neutral { border-color: #d1d5db; background-color: #ffffff; }
+        .btn-neutral:hover { background-color: #d1d5db; }
+        .btn-disagree { border-color: #9ca3af; background-color: #f9fafb; }
+        .btn-disagree:hover { background-color: #9ca3af; }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div id="app" class="max-w-md w-full bg-white rounded-3xl shadow-xl overflow-hidden relative">
+        <!-- Start Screen -->
+        <div id="start-screen" class="p-8 text-center">
+            <div class="mb-6">
+                <span class="inline-block bg-blue-100 text-blue-600 px-4 py-1 rounded-full text-sm font-bold mb-2">姫路医療専門学校</span>
+                <h1 class="text-3xl font-black text-gray-800 leading-tight">医療キャリア<br>適性チェック</h1>
+            </div>
+            <div class="mb-8">
+                <div class="bg-blue-50 rounded-2xl p-6 mb-4 flex justify-center items-center">
+                    <span class="text-6xl">🩺</span>
+                </div>
+                <p class="text-gray-600 leading-relaxed font-medium">
+                    今のあなたの感覚に近いものを選ぼう！<br>
+                    あなたの中に眠る「医療職の才能」を<br>キャラクターが教えてくれます。
+                </p>
+            </div>
+            <button onclick="startQuiz()" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-4 rounded-2xl shadow-lg transition duration-300 transform hover:-translate-y-1">
+                診断スタート！
+            </button>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quiz-screen" class="hidden">
+            <div class="bg-gray-100 h-2 w-full">
+                <div id="progress" class="progress-bar bg-blue-500 h-2 w-0"></div>
+            </div>
+            <div class="p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <span id="question-number" class="text-blue-500 font-bold bg-blue-50 px-3 py-1 rounded-full text-sm">Q.1 / 12</span>
+                </div>
+                
+                <h2 id="question-text" class="text-xl font-bold text-gray-800 mb-10 text-center leading-relaxed min-h-[4rem]">
+                    質問内容
+                </h2>
+
+                <!-- 度合い選択UI (MBTI風) -->
+                <div class="flex flex-col items-center">
+                    <div class="flex items-center justify-between w-full px-1">
+                        <div class="text-center">
+                            <span class="text-xs font-bold text-blue-500 block">非常に<br>思う</span>
+                        </div>
+                        <div class="flex items-center space-x-2 md:space-x-3">
+                            <button onclick="handleAnswer(2)" class="scale-btn w-12 h-12 border-4 btn-agree"></button>
+                            <button onclick="handleAnswer(1)" class="scale-btn w-9 h-9 border-4 btn-agree"></button>
+                            <button onclick="handleAnswer(0)" class="scale-btn w-7 h-7 border-4 btn-neutral"></button>
+                            <button onclick="handleAnswer(-1)" class="scale-btn w-9 h-9 border-4 btn-disagree"></button>
+                            <button onclick="handleAnswer(-2)" class="scale-btn w-12 h-12 border-4 btn-disagree"></button>
+                        </div>
+                        <div class="text-center">
+                            <span class="text-xs font-bold text-gray-400 block">全く<br>思わない</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <p class="text-center text-xs text-gray-400 mt-12 italic">直感で選んでみてね！</p>
+            </div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="result-screen" class="hidden p-8 fade-in text-center">
+            <h2 class="text-lg font-bold text-gray-500 mb-2">診断結果が出ました！</h2>
+            <div id="result-content">
+                <!-- JS will inject result content here -->
+            </div>
+            
+            <!-- Message -->
+            <div class="mt-8 p-6 bg-yellow-50 rounded-2xl text-left border-l-4 border-yellow-400 shadow-sm">
+                <p class="text-sm text-yellow-800 leading-relaxed">
+                    <strong class="text-base">✨ 大切なメッセージ</strong><br>
+                    これは今のあなたの“才能の傾向”です。医療職は努力でいくらでも伸ばせます。この結果をヒントに、自分にぴったりの道を探してみましょう！
+                </p>
+            </div>
+
+            <!-- Call to Action Buttons -->
+            <div class="mt-10 space-y-4">
+                <p class="text-gray-800 font-bold text-lg">オープンキャンパスで適性を確かめよう！</p>
+                
+                <a href="https://www.hmc.ac.jp/opencampus" target="_blank" class="block w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 rounded-2xl shadow-md transition transform hover:scale-105 flex items-center justify-center">
+                    <span class="mr-2">📅</span> オープンキャンパスを予約する
+                </a>
+            </div>
+
+            <button onclick="location.reload()" class="mt-12 text-gray-400 text-sm font-medium hover:underline">
+                もう一度診断する
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // イラストをSVGコードとして定義
+        const svgs = {
+            owl: `
+            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" class="char-svg">
+                <circle cx="100" cy="100" r="90" fill="#e0f2fe" />
+                <path d="M40,70 Q100,20 160,70 L160,160 Q100,190 40,160 Z" fill="#92400e" />
+                <path d="M40,70 Q100,20 160,70 L160,110 Q100,130 40,110 Z" fill="#b45309" />
+                <circle cx="70" cy="90" r="25" fill="white" />
+                <circle cx="130" cy="90" r="25" fill="white" />
+                <circle cx="70" cy="90" r="10" fill="#1e3a8a" />
+                <circle cx="130" cy="90" r="10" fill="#1e3a8a" />
+                <circle cx="70" cy="90" r="28" stroke="#3b82f6" stroke-width="5" fill="none" />
+                <circle cx="130" cy="90" r="28" stroke="#3b82f6" stroke-width="5" fill="none" />
+                <path d="M98,90 L102,90" stroke="#3b82f6" stroke-width="5" />
+                <path d="M90,110 L100,125 L110,110" fill="#f59e0b" />
+                <path d="M50,160 L70,170 L60,150 Z" fill="#f59e0b" />
+                <path d="M150,160 L130,170 L140,150 Z" fill="#f59e0b" />
+                <path d="M85,30 L100,60 L115,30" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+                <circle cx="100" cy="25" r="5" fill="#f59e0b" opacity="0.6"><animate attributeName="opacity" values="0.6;1;0.6" dur="2s" repeatCount="indefinite"/></circle>
+            </svg>`,
+            rabbit: `
+            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" class="char-svg">
+                <circle cx="100" cy="100" r="90" fill="#fce7f3" />
+                <ellipse cx="70" cy="50" rx="20" ry="50" fill="white" stroke="#fbcfe8" stroke-width="3"/>
+                <ellipse cx="130" cy="50" rx="20" ry="50" fill="white" stroke="#fbcfe8" stroke-width="3"/>
+                <ellipse cx="70" cy="50" rx="10" ry="30" fill="#fbcfe8" />
+                <ellipse cx="130" cy="50" rx="10" ry="30" fill="#fbcfe8" />
+                <circle cx="100" cy="120" r="50" fill="white" />
+                <circle cx="85" cy="110" r="6" fill="#4b5563" />
+                <circle cx="115" cy="110" r="6" fill="#4b5563" />
+                <path d="M95,120 Q100,125 105,120" stroke="#ec4899" stroke-width="3" fill="none"/>
+                <circle cx="70" cy="125" r="8" fill="#fbcfe8" opacity="0.6"/>
+                <circle cx="130" cy="125" r="8" fill="#fbcfe8" opacity="0.6"/>
+                <rect x="120" y="130" width="40" height="50" rx="5" fill="#fef08a" stroke="#d97706" stroke-width="2" transform="rotate(-10 140 155)"/>
+                <path d="M130,140 L150,140" stroke="#d97706" stroke-width="2" transform="rotate(-10 140 155)"/>
+                <path d="M130,150 L150,150" stroke="#d97706" stroke-width="2" transform="rotate(-10 140 155)"/>
+                <path d="M165,60 Q180,50 175,70 Q160,80 165,60 Z" fill="#ec4899"><animate attributeName="transform" values="scale(1);scale(1.1);scale(1)" dur="1.5s" repeatCount="indefinite"/></path>
+            </svg>`,
+            wolf: `
+            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" class="char-svg">
+                <circle cx="100" cy="100" r="90" fill="#ffedd5" />
+                <path d="M50,150 L50,80 L90,120 Z" fill="#9ca3af" />
+                <path d="M150,150 L150,80 L110,120 Z" fill="#9ca3af" />
+                <circle cx="100" cy="120" r="50" fill="#d1d5db" />
+                <path d="M80,80 L60,30 L100,70 Z" fill="#4b5563" />
+                <path d="M120,80 L140,30 L100,70 Z" fill="#4b5563" />
+                <path d="M80,110 L90,115 L80,105 Z" fill="white" />
+                <path d="M120,110 L110,115 L120,105 Z" fill="white" />
+                <circle cx="85" cy="115" r="5" fill="#1f2937" />
+                <circle cx="115" cy="115" r="5" fill="#1f2937" />
+                <path d="M95,125 L105,125 L100,135 Z" fill="#1f2937" />
+                <rect x="130" y="90" width="20" height="40" fill="#1f2937" rx="2"/>
+                <line x1="130" y1="90" x2="130" y2="70" stroke="#1f2937" stroke-width="2"/>
+                <rect x="135" y="95" width="10" height="10" fill="#84cc16"/>
+                <path d="M50,100 L40,80 L60,90 Z" fill="#fbbf24"><animate attributeName="opacity" values="1;0.5;1" dur="0.5s" repeatCount="indefinite"/></path>
+            </svg>`,
+            elephant: `
+            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" class="char-svg">
+                <circle cx="100" cy="100" r="90" fill="#dcfce7" />
+                <circle cx="60" cy="90" r="30" fill="#d1d5db" />
+                <circle cx="140" cy="90" r="30" fill="#d1d5db" />
+                <circle cx="100" cy="100" r="45" fill="#e5e7eb" />
+                <circle cx="85" cy="95" r="5" fill="#374151" />
+                <circle cx="115" cy="95" r="5" fill="#374151" />
+                <path d="M90,110 Q100,160 120,130" stroke="#e5e7eb" stroke-width="12" fill="none" stroke-linecap="round"/>
+                <path d="M60,90 Q50,80 70,80" fill="#fca5a5" opacity="0.6"/>
+                <path d="M140,90 Q150,80 130,80" fill="#fca5a5" opacity="0.6"/>
+                <rect x="130" y="140" width="40" height="30" fill="white" stroke="#1f2937" stroke-width="2" transform="rotate(-5)"/>
+                <line x1="135" y1="145" x2="165" y2="145" stroke="#1f2937" stroke-width="2" transform="rotate(-5)"/>
+                <line x1="135" y1="155" x2="165" y2="155" stroke="#1f2937" stroke-width="2" transform="rotate(-5)"/>
+                <path d="M150,60 L160,50 Q165,45 170,55 L160,65 Z" fill="#fca5a5" />
+            </svg>`
+        };
+
+        const questions = [
+            { q: "物事の仕組みや論理を考えるのが好きだ", target: "A" },
+            { q: "困っている人の気持ちにすぐ気づく方だ", target: "B" },
+            { q: "急なトラブルが起きると、体が先に動く", target: "C" },
+            { q: "一つのこと（勉強や趣味）を長く続けられる", target: "D" },
+            { q: "データや根拠がないと納得できない", target: "A" },
+            { q: "「ありがとう」と言われるのが一番のモチベーションだ", target: "B" },
+            { q: "変化の激しい、スピード感のある環境が好きだ", target: "C" },
+            { q: "将来は安定した資格を持って長く働きたい", target: "D" },
+            { q: "機械や専門知識を扱うことにワクワクする", target: "A" },
+            { q: "聞き上手だと人から言われることが多い", target: "B" },
+            { q: "じっとしているより、現場で活動したい", target: "C" },
+            { q: "相手の成長をじっくり見守ることに喜びを感じる", target: "D" }
+        ];
+
+        const types = {
+            A: {
+                title: "ひらめきフクロウタイプ",
+                sub: "ロジカル探究型",
+                jobs: "臨床工学技士（CE）／ 言語聴覚士（ST）",
+                desc: "構造を理解するのが好きで、冷静な判断が得意！技術と知識で信頼を得るプロフェッショナルに向いています。",
+                color: "blue",
+                svg: svgs.owl
+            },
+            B: {
+                title: "きづきウサギタイプ",
+                sub: "共感サポート型",
+                jobs: "言語聴覚士（ST）／ 作業療法士（OT）",
+                desc: "人の変化にいち早く気づける寄り添う心の持ち主。患者さんの「できた」を一番近くで支える仕事がピッタリです。",
+                color: "pink",
+                svg: svgs.rabbit
+            },
+            C: {
+                title: "いざというときオオカミタイプ",
+                sub: "即応アクション型",
+                jobs: "救急救命士（EMT）／ 臨床工学技士（CE）",
+                desc: "瞬発力と緊張に強い精神力を持っています。一分一秒を争う命の現場で、的確な判断を下す姿が想像できます。",
+                color: "orange",
+                svg: svgs.wolf
+            },
+            D: {
+                title: "じっくりゾウタイプ",
+                sub: "人生伴走型",
+                jobs: "作業療法士（OT）／ 言語聴覚士（ST）",
+                desc: "長期的な信頼関係を築くのが得意。相手の成長をじっくり見守り、生活そのものを支える仕事にやりがいを感じるはず。",
+                color: "green",
+                svg: svgs.elephant
+            }
+        };
+
+        let currentQuestion = 0;
+        let scores = { A: 0, B: 0, C: 0, D: 0 };
+
+        function startQuiz() {
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const q = questions[currentQuestion];
+            document.getElementById('question-number').innerText = `Q.${currentQuestion + 1} / 12`;
+            document.getElementById('question-text').innerText = q.q;
+            
+            const progress = ((currentQuestion) / questions.length) * 100;
+            document.getElementById('progress').style.width = `${progress}%`;
+        }
+
+        function handleAnswer(value) {
+            const target = questions[currentQuestion].target;
+            scores[target] += value;
+            
+            currentQuestion++;
+
+            if (currentQuestion < questions.length) {
+                setTimeout(showQuestion, 150);
+            } else {
+                setTimeout(showResult, 200);
+            }
+        }
+
+        function showResult() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+            document.getElementById('progress').style.width = `100%`;
+
+            const sortedKeys = Object.keys(scores).sort((a, b) => scores[b] - scores[a]);
+            const maxScore = scores[sortedKeys[0]];
+            const winners = sortedKeys.filter(key => scores[key] === maxScore);
+
+            let resultHTML = "";
+            winners.forEach((w, index) => {
+                const type = types[w];
+                const colorHex = { blue: '#3b82f6', pink: '#ec4899', orange: '#f97316', green: '#10b981' }[type.color];
+                
+                resultHTML += `
+                    <div class="mb-6 p-6 rounded-3xl border-4 fade-in" style="border-color: ${colorHex}; animation-delay: ${index * 0.2}s">
+                        <p class="text-sm font-bold mb-1" style="color: ${colorHex}">${type.sub}</p>
+                        <h3 class="text-2xl font-black mb-4" style="color: ${colorHex}">${type.title}</h3>
+                        
+                        <div class="char-img-container">
+                            ${type.svg}
+                        </div>
+                        
+                        <div class="bg-gray-50 p-4 rounded-xl text-left mb-4 text-gray-700 text-sm leading-relaxed border border-gray-100">
+                            ${type.desc}
+                        </div>
+                        <div class="text-left bg-white p-3 rounded-xl border border-dashed border-gray-300">
+                            <span class="text-xs font-bold text-gray-400 block mb-1">活躍できる未来：</span>
+                            <span class="inline-block text-gray-800 text-sm font-bold">${type.jobs}</span>
+                        </div>
+                    </div>
+                `;
+                if(index === 0 && winners.length > 1) {
+                    resultHTML += `<div class="text-gray-300 font-black text-xl mb-6">W TYPE!</div>`;
+                }
+            });
+
+            document.getElementById('result-content').innerHTML = resultHTML;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
