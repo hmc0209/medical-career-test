@@ -74,7 +74,7 @@
                 </div>
                 <p class="text-gray-600 leading-relaxed font-medium">
                     今のあなたの感覚に近いものを選ぼう！<br>
-                    あなたの中に眠る「医療職の才能」を<br>キャラクターが教えてくれます。
+                    たった10問で、あなたの中に眠る<br>「医療職の才能」が分かります。
                 </p>
             </div>
             <button onclick="startQuiz()" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-4 rounded-2xl shadow-lg transition duration-300 transform hover:-translate-y-1">
@@ -89,14 +89,18 @@
             </div>
             <div class="p-8">
                 <div class="flex justify-between items-center mb-6">
-                    <span id="question-number" class="text-blue-500 font-bold bg-blue-50 px-3 py-1 rounded-full text-sm">Q.1 / 12</span>
+                    <button onclick="goBack()" class="text-gray-400 hover:text-gray-600 flex items-center text-sm font-bold transition-colors px-2 py-1 rounded-lg hover:bg-gray-100">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        戻る
+                    </button>
+                    <span id="question-number" class="text-blue-500 font-bold bg-blue-50 px-3 py-1 rounded-full text-sm">Q.1 / 10</span>
                 </div>
                 
                 <h2 id="question-text" class="text-xl font-bold text-gray-800 mb-10 text-center leading-relaxed min-h-[4rem]">
                     質問内容
                 </h2>
 
-                <!-- 度合い選択UI (MBTI風) -->
+                <!-- 度合い選択UI -->
                 <div class="flex flex-col items-center">
                     <div class="flex items-center justify-between w-full px-1">
                         <div class="text-center">
@@ -224,19 +228,18 @@
             </svg>`
         };
 
+        // 10問に設定しつつ、結果のバランスが崩れないようにしています
         const questions = [
-            { q: "物事の仕組みや論理を考えるのが好きだ", target: "A" },
-            { q: "困っている人の気持ちにすぐ気づく方だ", target: "B" },
-            { q: "急なトラブルが起きると、体が先に動く", target: "C" },
-            { q: "一つのこと（勉強や趣味）を長く続けられる", target: "D" },
-            { q: "データや根拠がないと納得できない", target: "A" },
-            { q: "「ありがとう」と言われるのが一番のモチベーションだ", target: "B" },
-            { q: "変化の激しい、スピード感のある環境が好きだ", target: "C" },
-            { q: "将来は安定した資格を持って長く働きたい", target: "D" },
-            { q: "機械や専門知識を扱うことにワクワクする", target: "A" },
-            { q: "聞き上手だと人から言われることが多い", target: "B" },
-            { q: "じっとしているより、現場で活動したい", target: "C" },
-            { q: "相手の成長をじっくり見守ることに喜びを感じる", target: "D" }
+            { q: "機械や専門知識を扱い、論理的に考えるのが好きだ", target: "A" },
+            { q: "困っている人の気持ちにすぐ気づき、寄り添うことができる", target: "B" },
+            { q: "急なトラブルが起きても、慌てずすぐに行動できる", target: "C" },
+            { q: "一つのことを長く続け、相手の成長をじっくり見守れる", target: "D" },
+            { q: "「誰かの役に立ちたい」「生活を支えたい」という気持ちが強い", target: "ALL" },
+            { q: "データや数値をもとに、物事の原因を突き止めるのが得意だ", target: "A" },
+            { q: "人の話をじっくり聞き、相手の些細な変化を見逃さない", target: "B" },
+            { q: "プレッシャーがかかる場面でも、冷静に状況を判断できる", target: "C" },
+            { q: "すぐに結果が出なくても、コツコツとサポートを続けるのが苦にならない", target: "D" },
+            { q: "チームの仲間と協力して、目標に向かって取り組むのが好きだ", target: "ALL" }
         ];
 
         const types = {
@@ -276,8 +279,12 @@
 
         let currentQuestion = 0;
         let scores = { A: 0, B: 0, C: 0, D: 0 };
+        let answerHistory = [];
 
         function startQuiz() {
+            currentQuestion = 0;
+            scores = { A: 0, B: 0, C: 0, D: 0 };
+            answerHistory = [];
             document.getElementById('start-screen').classList.add('hidden');
             document.getElementById('quiz-screen').classList.remove('hidden');
             showQuestion();
@@ -285,7 +292,8 @@
 
         function showQuestion() {
             const q = questions[currentQuestion];
-            document.getElementById('question-number').innerText = `Q.${currentQuestion + 1} / 12`;
+            // ここで自動的に "現在の問題数 / 全体の問題数(10)" になるように設定しています
+            document.getElementById('question-number').innerText = `Q.${currentQuestion + 1} / ${questions.length}`;
             document.getElementById('question-text').innerText = q.q;
             
             const progress = ((currentQuestion) / questions.length) * 100;
@@ -294,7 +302,18 @@
 
         function handleAnswer(value) {
             const target = questions[currentQuestion].target;
-            scores[target] += value;
+            
+            answerHistory.push(value);
+            
+            // "ALL"の質問はすべてのタイプに加算することでバランスを維持
+            if (target === "ALL") {
+                scores.A += value;
+                scores.B += value;
+                scores.C += value;
+                scores.D += value;
+            } else {
+                scores[target] += value;
+            }
             
             currentQuestion++;
 
@@ -303,6 +322,31 @@
             } else {
                 setTimeout(showResult, 200);
             }
+        }
+
+        function goBack() {
+            if (currentQuestion === 0) {
+                // 第1問目で戻るを押した場合はスタート画面に戻る
+                document.getElementById('quiz-screen').classList.add('hidden');
+                document.getElementById('start-screen').classList.remove('hidden');
+                return;
+            }
+            
+            currentQuestion--;
+            const lastValue = answerHistory.pop();
+            const target = questions[currentQuestion].target;
+            
+            // 戻る時は加算した分を引く
+            if (target === "ALL") {
+                scores.A -= lastValue;
+                scores.B -= lastValue;
+                scores.C -= lastValue;
+                scores.D -= lastValue;
+            } else {
+                scores[target] -= lastValue;
+            }
+            
+            showQuestion();
         }
 
         function showResult() {
