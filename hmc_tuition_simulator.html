@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学費・奨学金シミュレーター｜姫路医療専門学校</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* カスタムラジオ/チェックボックス */
+        .card-input input:checked + div {
+            border-color: #2563eb;
+            background-color: #eff6ff;
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.1);
+        }
+        .card-input input:checked + div .check-icon {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .check-icon {
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 0.2s ease-in-out;
+        }
+        /* スライダー */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 24px;
+            width: 24px;
+            border-radius: 50%;
+            background: #2563eb;
+            cursor: pointer;
+            margin-top: -10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 6px;
+            cursor: pointer;
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        .result-panel {
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* タイムライン用のスタイル */
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 11px;
+            top: 24px;
+            bottom: -24px;
+            width: 2px;
+            background-color: #e2e8f0;
+        }
+        .timeline-item:last-child::before {
+            display: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-6">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm py-4 px-4 text-center sticky top-0 z-40 bg-opacity-95 backdrop-blur-sm">
+        <span class="text-blue-600 font-bold text-xs tracking-widest">姫路医療専門学校</span>
+        <h1 class="text-lg sm:text-xl font-black text-gray-800 mt-1">学費・奨学金シミュレーター</h1>
+    </header>
+
+    <main class="max-w-xl mx-auto p-4 space-y-6 mt-2 mb-8">
+        
+        <div class="bg-blue-50 text-blue-800 p-4 rounded-xl text-sm font-medium leading-relaxed shadow-inner">
+            <p>スマホでポチポチ選ぶだけ！たった3分で<br>
+            <strong class="text-blue-600">「初年度の学費」</strong>と<strong class="text-blue-600">「納入スケジュール」</strong>がわかります。</p>
+        </div>
+
+        <!-- 1. 学科選択 -->
+        <section>
+            <h2 class="text-base font-bold text-gray-700 mb-3 flex items-center">
+                <span class="bg-blue-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs mr-2">1</span>
+                希望の学科
+            </h2>
+            <div class="grid grid-cols-1 gap-2" id="course-list">
+                <!-- JSで生成 -->
+            </div>
+        </section>
+
+        <!-- 2. 入試方法 -->
+        <section>
+            <h2 class="text-base font-bold text-gray-700 mb-3 flex items-center">
+                <span class="bg-blue-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs mr-2">2</span>
+                入試方法・特待生チャレンジ
+            </h2>
+            <div class="grid grid-cols-2 gap-2 mb-3">
+                <label class="card-input cursor-pointer">
+                    <input type="radio" name="admission" value="ao" class="hidden" checked onchange="calculate()">
+                    <div class="border-2 border-gray-200 rounded-xl p-3 text-center transition-all bg-white relative">
+                        <div class="font-bold text-gray-800 text-sm">AO入試</div>
+                        <div class="text-[10px] text-orange-500 font-bold mt-1">選考料2万円免除!</div>
+                        <div class="check-icon absolute top-2 right-2 text-blue-600">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                        </div>
+                    </div>
+                </label>
+                <label class="card-input cursor-pointer">
+                    <input type="radio" name="admission" value="suisen" class="hidden" onchange="calculate()">
+                    <div class="border-2 border-gray-200 rounded-xl p-3 text-center transition-all bg-white relative h-full flex items-center justify-center">
+                        <div class="font-bold text-gray-800 text-sm">推薦入試</div>
+                        <div class="check-icon absolute top-2 right-2 text-blue-600">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                        </div>
+                    </div>
+                </label>
+            </div>
+            <label class="card-input cursor-pointer block mt-2">
+                <input type="checkbox" id="tokutai-check" class="hidden" onchange="rollTokutai()">
+                <div class="border-2 border-orange-200 bg-orange-50 rounded-xl p-4 flex items-center justify-between transition-all">
+                    <div>
+                        <div class="font-bold text-orange-700 text-sm flex items-center">
+                            特待生選抜を受験する
+                        </div>
+                        <div class="text-[10px] text-gray-600 mt-1">最大100万円免除のチャンス！（シミュレーションで運試し）</div>
+                    </div>
+                    <div class="w-6 h-6 rounded border border-orange-400 flex items-center justify-center bg-white">
+                        <svg class="w-4 h-4 text-orange-600 check-icon opacity-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                    </div>
+                </div>
+            </label>
+        </section>
+
+        <!-- 3. 納入方法 -->
+        <section>
+            <h2 class="text-base font-bold text-gray-700 mb-3 flex items-center">
+                <span class="bg-blue-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs mr-2">3</span>
+                学費の納入方法
+            </h2>
+            <div class="grid grid-cols-2 gap-2">
+                <label class="card-input cursor-pointer">
+                    <input type="radio" name="payment" value="1" class="hidden" onchange="calculate()">
+                    <div class="border-2 border-gray-200 rounded-xl py-3 px-2 text-center transition-all bg-white relative">
+                        <div class="font-bold text-gray-800 text-sm">一括納入</div>
+                        <div class="check-icon absolute top-2 right-2 text-blue-600">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                        </div>
+                    </div>
+                </label>
+                <label class="card-input cursor-pointer">
+                    <input type="radio" name="payment" value="2" class="hidden" checked onchange="calculate()">
+                    <div class="border-2 border-gray-200 rounded-xl py-3 px-2 text-center transition-all bg-white relative">
+                        <div class="font-bold text-gray-800 text-sm">2回分割</div>
+                        <div class="text-[10px] text-gray-500 mt-1">合格後 / 1年次8月</div>
+                        <div class="check-icon absolute top-2 right-2 text-blue-600">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                        </div>
+                    </div>
+                </label>
+            </div>
+        </section>
+
+        <!-- 4. 毎月の準備 -->
+        <section class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm">
+            <h2 class="text-base font-bold text-gray-700 mb-4 flex items-center">
+                <span class="bg-teal-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs mr-2">4</span>
+                ご家庭・本人の準備額（月額）
+            </h2>
+            <div class="mb-5">
+                <div class="flex justify-between items-end mb-2">
+                    <label class="text-sm font-bold text-gray-600">保護者からの支援</label>
+                    <div class="text-lg font-black text-teal-600"><span id="val-family">30,000</span><span class="text-xs text-gray-500 font-normal"> 円/月</span></div>
+                </div>
+                <input type="range" id="slider-family" min="0" max="100000" step="5000" value="30000" oninput="updateSlider('family')" onchange="calculate()">
+            </div>
+            <div>
+                <div class="flex justify-between items-end mb-2">
+                    <label class="text-sm font-bold text-gray-600">本人のアルバイト</label>
+                    <div class="text-lg font-black text-teal-600"><span id="val-arbeit">30,000</span><span class="text-xs text-gray-500 font-normal"> 円/月</span></div>
+                </div>
+                <input type="range" id="slider-arbeit" min="0" max="100000" step="5000" value="30000" oninput="updateSlider('arbeit')" onchange="calculate()">
+            </div>
+        </section>
+    </main>
+
+    <!-- 結果表示エリア -->
+    <div class="bg-white result-panel p-5 relative z-50">
+        <div class="max-w-xl mx-auto">
+            
+            <h3 class="text-center font-bold text-gray-700 text-lg mb-4 border-b-2 border-blue-500 pb-2 inline-block mx-auto block w-max">シミュレーション結果</h3>
+
+            <!-- サマリーカード -->
+            <div class="bg-blue-50 rounded-2xl p-4 mb-5 border border-blue-100">
+                <div class="text-sm font-bold text-gray-600 mb-1">初年度納入金 合計（諸経費含む）</div>
+                <div class="text-right mb-4">
+                    <span class="text-3xl font-black text-gray-800" id="res-total-yearly">0</span>
+                    <span class="text-sm font-bold text-gray-600">円</span>
+                </div>
+
+                <div class="bg-white rounded-xl p-3 shadow-sm border border-blue-100">
+                    <div class="text-xs font-bold text-blue-600 mb-1">奨学金（貸与）などで補う必要額の目安</div>
+                    <div class="flex items-baseline justify-end">
+                        <span class="text-4xl font-black text-blue-600 tracking-tight" id="res-monthly-need">0</span>
+                        <span class="text-sm font-bold text-gray-600 ml-1">円 / 月</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 納入スケジュール（タイムライン） -->
+            <div class="mb-6">
+                <h4 class="font-bold text-gray-800 text-sm mb-3 flex items-center">
+                    <svg class="w-5 h-5 mr-1 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    初年度の納入スケジュール
+                </h4>
+                
+                <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                    
+                    <!-- タイミング1 -->
+                    <div class="relative pl-6 pb-6 timeline-item">
+                        <div class="absolute left-0 top-1 w-6 h-6 bg-blue-100 rounded-full border-2 border-blue-500 flex items-center justify-center z-10">
+                            <span class="text-blue-600 text-[10px] font-bold">1</span>
+                        </div>
+                        <div class="font-bold text-blue-700 text-sm mb-1">合格後の2週間以内</div>
+                        <div class="bg-white p-3 rounded shadow-sm border border-gray-100">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-xs text-gray-600">入学金</span>
+                                <span class="font-bold text-sm text-gray-800" id="dt-admission-fee">100,000円</span>
+                            </div>
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-xs text-gray-600">学費 <span id="dt-tuition-label" class="text-[10px] bg-gray-100 px-1 rounded">前期分</span></span>
+                                <span class="font-bold text-sm text-gray-800" id="dt-tuition-1">0円</span>
+                            </div>
+                            <!-- 減免がある場合 -->
+                            <div id="discount-area" class="text-[11px] text-orange-600 border-t border-gray-100 mt-1 pt-1">
+                                <div class="flex justify-between">
+                                    <span>入試・特待生 減免</span>
+                                    <span id="dt-total-discount">-0円</span>
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center mt-2 pt-2 border-t border-gray-200">
+                                <span class="text-xs font-bold text-gray-700">納入額①</span>
+                                <span class="font-black text-blue-600 text-lg" id="dt-pay-1">0円</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- タイミング2 -->
+                    <div class="relative pl-6 pb-6 timeline-item">
+                        <div class="absolute left-0 top-1 w-6 h-6 bg-green-100 rounded-full border-2 border-green-500 flex items-center justify-center z-10">
+                            <span class="text-green-600 text-[10px] font-bold">2</span>
+                        </div>
+                        <div class="font-bold text-green-700 text-sm mb-1">高3の 3月中旬</div>
+                        <div class="bg-white p-3 rounded shadow-sm border border-gray-100">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs text-gray-600">諸経費（教科書・実習着など）</span>
+                                <span class="font-bold text-sm text-gray-800" id="dt-expenses">380,000円</span>
+                            </div>
+                            <div class="flex justify-between items-center mt-2 pt-2 border-t border-gray-200">
+                                <span class="text-xs font-bold text-gray-700">納入額②</span>
+                                <span class="font-black text-green-600 text-lg" id="dt-pay-2">380,000円</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- タイミング3 (2分割時のみ表示) -->
+                    <div class="relative pl-6" id="timeline-step3">
+                        <div class="absolute left-0 top-1 w-6 h-6 bg-orange-100 rounded-full border-2 border-orange-500 flex items-center justify-center z-10">
+                            <span class="text-orange-600 text-[10px] font-bold">3</span>
+                        </div>
+                        <div class="font-bold text-orange-700 text-sm mb-1">1年生の 8月</div>
+                        <div class="bg-white p-3 rounded shadow-sm border border-gray-100">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs text-gray-600">学費 <span class="text-[10px] bg-gray-100 px-1 rounded">後期分</span></span>
+                                <span class="font-bold text-sm text-gray-800" id="dt-tuition-2">0円</span>
+                            </div>
+                            <div class="flex justify-between items-center mt-2 pt-2 border-t border-gray-200">
+                                <span class="text-xs font-bold text-gray-700">納入額③</span>
+                                <span class="font-black text-orange-600 text-lg" id="dt-pay-3">0円</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                
+                <!-- 2年生以降の案内 -->
+                <div class="mt-3 text-[11px] text-gray-500 bg-gray-50 p-3 rounded border border-gray-200 leading-relaxed">
+                    <strong class="text-gray-600">💡 2年生以降のスケジュール</strong><br>
+                    次年度の学費は、<strong class="text-gray-700">1月〜2月頃</strong>をめどにご納入いただきます。また、諸経費は進級時（毎年）に別途必要となります。
+                </div>
+            </div>
+
+            <!-- CTAボタン -->
+            <div class="space-y-3">
+                <a href="https://page.line.me/hmc-ac-jp" target="_blank" class="block w-full bg-[#06C755] hover:bg-[#05b34c] text-white font-bold py-4 rounded-xl shadow-lg text-center transition transform hover:-translate-y-1 flex items-center justify-center">
+                    <svg class="w-6 h-6 mr-2" viewBox="0 0 24 24" fill="currentColor"><path d="M24 10.304c0-5.369-5.383-9.738-12-9.738-6.616 0-12 4.369-12 9.738 0 4.814 3.55 8.845 8.435 9.581.332.072.772.222.887.509.103.256.034.664.016.829-.026.241-.168 1.002-.206 1.231-.061.353-.292 1.419 1.258.766 1.551-.652 8.356-4.919 11.233-8.318 1.583-1.868 2.377-3.696 2.377-4.598zm-15.093 2.767h-3.411c-.326 0-.592-.266-.592-.592v-4.59c0-.326.266-.592.592-.592h.931c.326 0 .592.266.592.592v3.66h1.888c.326 0 .592.266.592.592v.93c0 .326-.266.592-.592.592zm3.834 0h-.931c-.326 0-.592-.266-.592-.592v-4.59c0-.326.266-.592.592-.592h.931c.326 0 .592.266.592.592v4.59c0 .326-.266.592-.592.592zm4.332 0h-1.077c-.15 0-.294-.055-.407-.156l-1.996-1.782v1.346c0 .326-.266.592-.592.592h-.931c-.326 0-.592-.266-.592-.592v-4.59c0-.326.266-.592.592-.592h.931c.326 0 .592.266.592.592v1.346l1.996-1.782c.113-.101.257-.156.407-.156h1.077c.189 0 .307.214.195.365l-1.637 2.203 1.637 2.203c.112.151-.006.365-.195.365zm2.716-2.522c0 .326-.266.592-.592.592h-1.888v.93c0 .326-.266.592-.592.592h-.931c-.326 0-.592-.266-.592-.592v-4.59c0-.326.266-.592.592-.592h3.411c.326 0 .592.266.592.592v.93c0 .326-.266.592-.592.592h-1.888v.37h1.888c.326 0 .592.266.592.592v.93z"/></svg>
+                    LINEで学費・奨学金の個別相談
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- JavaScript 計算ロジック -->
+    <script>
+        // ==========================================
+        // 定数・データ定義
+        // ==========================================
+        
+        // 学科データ（入学金・学費・諸経費を分離）
+        const COURSES = [
+            { id: 'ot', name: '作業療法士科', admissionFee: 100000, tuition: 1499250, expenses: 380000 },
+            { id: 'st', name: '言語聴覚士科', admissionFee: 100000, tuition: 1020000, expenses: 380000 },
+            { id: 'ce', name: '臨床工学技士科', admissionFee: 100000, tuition: 1120000, expenses: 380000 },
+            { id: 'emt', name: '救急救命士科', admissionFee: 100000, tuition: 1020000, expenses: 380000 }
+        ];
+
+        // 入試減免
+        const AO_DISCOUNT = 20000;
+        const TOKUTAI_AMOUNTS = [1000000, 500000, 100000, 0];
+        let currentTokutaiDiscount = 0;
+
+        // ==========================================
+        // UI初期化
+        // ==========================================
+        function init() {
+            const courseList = document.getElementById('course-list');
+            COURSES.forEach((course, index) => {
+                const checked = index === 0 ? 'checked' : '';
+                const totalFirstYear = course.admissionFee + course.tuition + course.expenses;
+                
+                const html = `
+                    <label class="card-input cursor-pointer">
+                        <input type="radio" name="course" value="${course.id}" class="hidden" ${checked} onchange="calculate()">
+                        <div class="border-2 border-gray-200 rounded-xl p-4 flex justify-between items-center transition-all bg-white">
+                            <div>
+                                <div class="font-bold text-gray-800">${course.name}</div>
+                                <div class="text-[11px] text-gray-500 mt-1">
+                                    学費 ${formatCurrency(course.tuition/10000)}万 + 諸経費約${formatCurrency(course.expenses/10000)}万
+                                </div>
+                            </div>
+                            <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center bg-white">
+                                <svg class="w-4 h-4 text-blue-600 check-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                            </div>
+                        </div>
+                    </label>
+                `;
+                courseList.insertAdjacentHTML('beforeend', html);
+            });
+            calculate();
+        }
+
+        function formatCurrency(num) {
+            return new Intl.NumberFormat('ja-JP').format(num);
+        }
+
+        function updateSlider(type) {
+            const val = document.getElementById(`slider-${type}`).value;
+            document.getElementById(`val-${type}`).innerText = formatCurrency(val);
+        }
+
+        function rollTokutai() {
+            const isChecked = document.getElementById('tokutai-check').checked;
+            if (isChecked) {
+                const randomIndex = Math.floor(Math.random() * TOKUTAI_AMOUNTS.length);
+                currentTokutaiDiscount = TOKUTAI_AMOUNTS[randomIndex];
+            } else {
+                currentTokutaiDiscount = 0;
+            }
+            calculate();
+        }
+
+        // ==========================================
+        // メイン計算処理
+        // ==========================================
+        function calculate() {
+            // 1. 入力取得
+            const courseId = document.querySelector('input[name="course"]:checked').value;
+            const admission = document.querySelector('input[name="admission"]:checked').value;
+            const isTokutai = document.getElementById('tokutai-check').checked;
+            const paymentType = document.querySelector('input[name="payment"]:checked').value;
+            
+            const arbeitVal = parseInt(document.getElementById('slider-arbeit').value, 10);
+            const familyVal = parseInt(document.getElementById('slider-family').value, 10);
+
+            // 2. 基本金額の取得
+            const courseData = COURSES.find(c => c.id === courseId);
+            const admissionFee = courseData.admissionFee; // 10万
+            const tuition = courseData.tuition;           // 140万等
+            const expenses = courseData.expenses;         // 38万
+
+            // 3. 減免計算（学費から引く想定）
+            let admissionDiscount = (admission === 'ao') ? AO_DISCOUNT : 0;
+            let tokutaiDiscount = isTokutai ? currentTokutaiDiscount : 0;
+            let totalDiscount = admissionDiscount + tokutaiDiscount;
+            
+            // 実質学費（減免後）
+            let netTuition = tuition - totalDiscount;
+            if (netTuition < 0) netTuition = 0;
+
+            // 総額
+            const totalYearly = admissionFee + netTuition + expenses;
+
+            // 4. 納入スケジュールの計算
+            let tuitionPay1 = 0; // 合格後納入する学費部分
+            let tuitionPay2 = 0; // 8月に納入する学費部分
+
+            if (paymentType === '1') {
+                // 一括：合格後に学費全額
+                tuitionPay1 = netTuition;
+                tuitionPay2 = 0;
+                document.getElementById('timeline-step3').style.display = 'none';
+                document.getElementById('dt-tuition-label').innerText = '一括分';
+            } else {
+                // 2分割：合格後に半分、8月に半分
+                tuitionPay1 = Math.floor(netTuition / 2);
+                tuitionPay2 = netTuition - tuitionPay1;
+                document.getElementById('timeline-step3').style.display = 'block';
+                document.getElementById('dt-tuition-label').innerText = '前期分';
+            }
+
+            // 各タイミングの納入額
+            const pay1 = admissionFee + tuitionPay1; // ①合格後
+            const pay2 = expenses;                   // ②3月中旬
+            const pay3 = tuitionPay2;                // ③8月
+
+            // 5. 月々の必要準備額（貸与奨学金等の目安）
+            // 初年度総額から、家庭と本人の準備額(年額換算)を引く
+            let supportYearly = (arbeitVal + familyVal) * 12;
+            let needYearly = totalYearly - supportYearly;
+            if (needYearly < 0) needYearly = 0;
+            let monthlyNeed = Math.ceil(needYearly / 12);
+
+            // ==========================================
+            // 結果の描画（DOM更新）
+            // ==========================================
+            document.getElementById('res-total-yearly').innerText = formatCurrency(totalYearly);
+            document.getElementById('res-monthly-need').innerText = formatCurrency(monthlyNeed);
+
+            // スケジュール明細
+            document.getElementById('dt-admission-fee').innerText = formatCurrency(admissionFee) + "円";
+            document.getElementById('dt-tuition-1').innerText = formatCurrency(tuitionPay1) + "円";
+            
+            const discountArea = document.getElementById('discount-area');
+            if (totalDiscount > 0) {
+                discountArea.style.display = 'block';
+                document.getElementById('dt-total-discount').innerText = "-" + formatCurrency(totalDiscount) + "円";
+            } else {
+                discountArea.style.display = 'none';
+            }
+
+            document.getElementById('dt-pay-1').innerText = formatCurrency(pay1) + "円";
+            document.getElementById('dt-expenses').innerText = formatCurrency(pay2) + "円";
+            document.getElementById('dt-pay-2').innerText = formatCurrency(pay2) + "円";
+
+            if (paymentType === '2') {
+                document.getElementById('dt-tuition-2').innerText = formatCurrency(tuitionPay2) + "円";
+                document.getElementById('dt-pay-3').innerText = formatCurrency(pay3) + "円";
+            }
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
