@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
@@ -113,7 +113,7 @@
                     <input type="radio" name="admission" value="shitei" class="hidden" onchange="calculate()">
                     <div class="border-2 border-gray-200 rounded-xl p-3 text-center transition-all bg-white relative flex flex-col justify-center h-full">
                         <div class="font-bold text-gray-800 text-sm">指定校推薦</div>
-                        <div class="text-[10px] text-gray-500 mt-1">5月以降</div>
+                        <div class="text-[10px] text-gray-500 mt-1">10月以降</div>
                         <div class="check-icon absolute top-2 right-2 text-blue-600">
                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
                         </div>
@@ -151,20 +151,47 @@
                 </label>
             </div>
             
-            <label class="card-input cursor-pointer block mt-3">
-                <input type="checkbox" id="tokutai-check" class="hidden" onchange="rollTokutai()">
-                <div class="border-2 border-orange-200 bg-orange-50 rounded-xl p-4 flex items-center justify-between transition-all">
-                    <div>
-                        <div class="font-bold text-orange-700 text-sm flex items-center">
-                            特待生選抜を受験する
+            <div class="mt-4">
+                <h3 class="font-bold text-sm text-gray-700 mb-2">特待生選抜による減免</h3>
+                <div class="grid grid-cols-2 gap-2">
+                    <label class="card-input cursor-pointer">
+                        <input type="radio" name="tokutai" value="1000000" class="hidden" onchange="calculate()">
+                        <div class="border-2 border-gray-200 rounded-xl py-3 px-1 text-center transition-all bg-white relative h-full flex flex-col justify-center">
+                            <div class="font-bold text-orange-600 text-sm">100万円免除</div>
+                            <div class="check-icon absolute top-1 right-1 text-blue-600">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                            </div>
                         </div>
-                        <div class="text-[10px] text-gray-600 mt-1">最大100万円免除のチャンス！（シミュレーションで運試し）</div>
-                    </div>
-                    <div class="w-6 h-6 rounded border border-orange-400 flex items-center justify-center bg-white flex-shrink-0">
-                        <svg class="w-4 h-4 text-orange-600 check-icon opacity-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-                    </div>
+                    </label>
+                    <label class="card-input cursor-pointer">
+                        <input type="radio" name="tokutai" value="500000" class="hidden" onchange="calculate()">
+                        <div class="border-2 border-gray-200 rounded-xl py-3 px-1 text-center transition-all bg-white relative h-full flex flex-col justify-center">
+                            <div class="font-bold text-orange-600 text-sm">50万円免除</div>
+                            <div class="check-icon absolute top-1 right-1 text-blue-600">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                            </div>
+                        </div>
+                    </label>
+                    <label class="card-input cursor-pointer">
+                        <input type="radio" name="tokutai" value="100000" class="hidden" onchange="calculate()">
+                        <div class="border-2 border-gray-200 rounded-xl py-3 px-1 text-center transition-all bg-white relative h-full flex flex-col justify-center">
+                            <div class="font-bold text-orange-600 text-sm">10万円免除</div>
+                            <div class="check-icon absolute top-1 right-1 text-blue-600">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                            </div>
+                        </div>
+                    </label>
+                    <label class="card-input cursor-pointer">
+                        <input type="radio" name="tokutai" value="0" class="hidden" checked onchange="calculate()">
+                        <div class="border-2 border-gray-200 rounded-xl py-3 px-1 text-center transition-all bg-white relative h-full flex flex-col justify-center">
+                            <div class="font-bold text-gray-600 text-sm">該当なし</div>
+                            <div class="check-icon absolute top-1 right-1 text-blue-600">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                            </div>
+                        </div>
+                    </label>
                 </div>
-            </label>
+            </div>
         </section>
 
         <!-- 3. 学園特別・既卒者向け支援制度 -->
@@ -254,11 +281,11 @@
                     初年度 学校への納入金総額
                 </div>
                 <div class="text-right">
-                    <span class="text-4xl font-black text-indigo-900 tracking-tight" id="res-grand-total">0</span>
+                    <span class="text-sm font-bold text-indigo-700 mr-1">約</span><span class="text-4xl font-black text-indigo-900 tracking-tight" id="res-grand-total">0</span>
                     <span class="text-sm font-bold text-indigo-700 ml-1">円</span>
                 </div>
                 <div class="text-[10px] text-indigo-600 mt-2 leading-relaxed">
-                    ※選考料、入学金、授業料、諸経費の合計です（特待生などの各種減免額を引いた後の金額です）。
+                    ※選考料、入学金、授業料、諸経費の概算の合計です（特待生などの各種減免額を引いた後の金額です）。
                 </div>
             </div>
 
@@ -269,11 +296,11 @@
                     【入学前】に必要な納入額（出願時〜3月中旬）
                 </div>
                 <div class="text-right mb-2">
-                    <span class="text-3xl font-black text-gray-800" id="res-pre-total">0</span>
+                    <span class="text-sm font-bold text-gray-600 mr-1">約</span><span class="text-3xl font-black text-gray-800" id="res-pre-total">0</span>
                     <span class="text-sm font-bold text-gray-600">円</span>
                 </div>
                 <div class="text-[10px] text-gray-500 leading-relaxed">
-                    ※選考料・入学金・前期学費・諸経費の合計です。自己資金や国の教育ローン等でのご準備目安となります。
+                    ※選考料・入学金・学費(1回目)・諸経費の概算の合計です。自己資金や国の教育ローン等でのご準備目安となります。
                 </div>
             </div>
 
@@ -309,27 +336,19 @@
                         </div>
                     </div>
 
-                    <!-- 1. 合格後2週間 -->
+                    <!-- 1. 合格後2週間 (入学金＋学費) -->
                     <div class="relative pl-6 pb-6 timeline-item">
                         <div class="absolute left-0 top-1 w-6 h-6 bg-blue-100 rounded-full border-2 border-blue-500 flex items-center justify-center z-10">
                             <span class="text-blue-600 text-[10px] font-bold">1</span>
                         </div>
                         <div class="font-bold text-blue-700 text-sm mb-1">合格後の2週間以内</div>
-                        <div class="bg-white p-3 rounded shadow-sm border border-gray-100 flex justify-between items-center">
-                            <span class="text-xs font-bold text-gray-700">入学金</span>
-                            <span class="font-black text-blue-600 text-lg" id="dt-admission-fee">200,000円</span>
-                        </div>
-                    </div>
-
-                    <!-- 2. 合格後4週間 -->
-                    <div class="relative pl-6 pb-6 timeline-item">
-                        <div class="absolute left-0 top-1 w-6 h-6 bg-indigo-100 rounded-full border-2 border-indigo-500 flex items-center justify-center z-10">
-                            <span class="text-indigo-600 text-[10px] font-bold">2</span>
-                        </div>
-                        <div class="font-bold text-indigo-700 text-sm mb-1">合格後の4週間以内</div>
                         <div class="bg-white p-3 rounded shadow-sm border border-gray-100">
-                            <div class="flex justify-between items-center mb-1">
-                                <span class="text-xs text-gray-600">学費 <span id="dt-tuition-label" class="text-[10px] bg-gray-100 px-1 rounded">前期分</span></span>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-bold text-gray-700">入学金</span>
+                                <span class="font-bold text-sm text-gray-800" id="dt-admission-fee">200,000円</span>
+                            </div>
+                            <div class="flex justify-between items-center mb-1 border-t border-gray-100 pt-2">
+                                <span class="text-xs text-gray-600">学費 <span id="dt-tuition-label" class="text-[10px] bg-gray-100 px-1 rounded">1回目</span></span>
                                 <span class="font-bold text-sm text-gray-800" id="dt-tuition-1">0円</span>
                             </div>
                             <!-- 減免内訳（複数ある場合に対応） -->
@@ -337,16 +356,16 @@
                                 <!-- JSで減免内容が挿入されます -->
                             </div>
                             <div class="flex justify-between items-center mt-2 pt-2 border-t border-gray-200">
-                                <span class="text-xs font-bold text-gray-700">納入額（学費）</span>
-                                <span class="font-black text-indigo-600 text-lg" id="dt-pay-2">0円</span>
+                                <span class="text-xs font-bold text-gray-700">納入額①</span>
+                                <span class="font-black text-blue-600 text-lg" id="dt-pay-1">0円</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- 3. 3月中旬 -->
+                    <!-- 2. 3月中旬 -->
                     <div class="relative pl-6 pb-6 timeline-item">
                         <div class="absolute left-0 top-1 w-6 h-6 bg-green-100 rounded-full border-2 border-green-500 flex items-center justify-center z-10">
-                            <span class="text-green-600 text-[10px] font-bold">3</span>
+                            <span class="text-green-600 text-[10px] font-bold">2</span>
                         </div>
                         <div class="font-bold text-green-700 text-sm mb-1">入学前の 3月中旬</div>
                         <div class="bg-white p-3 rounded shadow-sm border border-gray-100 flex justify-between items-center">
@@ -355,44 +374,24 @@
                         </div>
                     </div>
 
-                    <!-- 4. 8月 (2分割時のみ) -->
-                    <div class="relative pl-6" id="timeline-step4">
+                    <!-- 3. 8月 (2分割時のみ) -->
+                    <div class="relative pl-6" id="timeline-step3">
                         <div class="absolute left-0 top-1 w-6 h-6 bg-orange-100 rounded-full border-2 border-orange-500 flex items-center justify-center z-10">
-                            <span class="text-orange-600 text-[10px] font-bold">4</span>
+                            <span class="text-orange-600 text-[10px] font-bold">3</span>
                         </div>
                         <div class="font-bold text-orange-700 text-sm mb-1">1年生の 8月</div>
                         <div class="bg-white p-3 rounded shadow-sm border border-gray-100 flex justify-between items-center">
-                            <span class="text-xs font-bold text-gray-700">学費 <span class="text-[10px] bg-gray-100 px-1 rounded font-normal">後期分</span></span>
-                            <span class="font-black text-orange-600 text-lg" id="dt-pay-4">0円</span>
+                            <span class="text-xs font-bold text-gray-700">学費 <span class="text-[10px] bg-gray-100 px-1 rounded font-normal">2回目</span></span>
+                            <span class="font-black text-orange-600 text-lg" id="dt-pay-3">0円</span>
                         </div>
                     </div>
 
-                </div>
-
-                <!-- 修学支援新制度（予約採用）のお知らせ -->
-                <div class="mt-4 bg-green-50 rounded-2xl p-4 border border-green-200 relative shadow-sm">
-                    <div class="text-sm font-bold text-green-800 mb-2 flex items-center">
-                        <svg class="w-5 h-5 mr-1 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        高校3年生の4〜5月は申込時期です！
-                    </div>
-                    <div class="text-sm text-green-900 font-bold mb-3 leading-relaxed">
-                        給付型奨学金・授業料減免（予約採用）を今予約しておくと、入学後の負担を大きく減らせる可能性があります。
-                    </div>
-                    <ul class="text-xs text-green-800 space-y-2 mb-2 bg-white p-3 rounded-xl border border-green-100">
-                        <li class="flex justify-between items-center"><span>・給付型奨学金：</span><span class="font-bold text-sm">最大 75,800円/月</span></li>
-                        <li class="flex justify-between items-center"><span>・授業料減免：</span><span class="font-bold text-sm">最大 590,000円/年</span></li>
-                        <li class="flex justify-between items-center"><span>・入学金減免：</span><span class="font-bold text-sm">最大 160,000円</span></li>
-                        <li class="font-bold text-orange-600 mt-2 pt-2 border-t border-green-50">・多子世帯支援あり</li>
-                    </ul>
-                    <div class="text-[10px] text-green-700 leading-tight">
-                        ※世帯収入・扶養人数によって異なります。
-                    </div>
                 </div>
                 
                 <!-- 2年生以降の案内 -->
                 <div class="mt-4 text-xs text-gray-600 bg-gray-50 p-4 rounded-xl border border-gray-200 leading-relaxed shadow-inner">
                     <strong class="text-gray-800 text-sm flex items-center mb-1"><svg class="w-4 h-4 mr-1 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM15.05 15.05a1 1 0 01-1.414 0l-.707-.707a1 1 0 011.414-1.414l.707.707a1 1 0 010 1.414zM10 18a1 1 0 01-1-1v-1a1 1 0 112 0v1a1 1 0 01-1 1zM5.657 15.657a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM4 10a1 1 0 01-1 1H2a1 1 0 110-2h1a1 1 0 011 1zM6.343 5.757a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414l.707.707z"></path></svg> 2年次以降に向けて</strong>
-                    1年生の8月に後期学費を納入いただいた後、次は<strong class="text-blue-600 font-bold">1月〜2月頃に「2年生の前期学費＋諸経費」</strong>の納入タイミングがやってきます。<br>
+                    1年生の8月に学費(2回目)を納入いただいた後、次は<strong class="text-blue-600 font-bold">1月〜2月頃に「2年生の学費(1回目)＋諸経費」</strong>の納入タイミングがやってきます。<br>
                     入学後も、年間を通して学費や生活費の計画的なやりくりが大切になります。
                 </div>
             </div>
@@ -421,10 +420,6 @@
             { id: 'ce', name: '臨床工学技士科', admissionFee: 200000, tuition: 1400000, expenses: 330000 },
             { id: 'emt', name: '救急救命士科', admissionFee: 100000, tuition: 1300000, expenses: 330000 }
         ];
-
-        // 特待生減免額
-        const TOKUTAI_AMOUNTS = [1000000, 500000, 100000, 0];
-        let currentTokutaiDiscount = 0;
 
         // 追加の減免定数
         const JIKEI_DISCOUNT = 100000;
@@ -463,17 +458,6 @@
             return new Intl.NumberFormat('ja-JP').format(num);
         }
 
-        function rollTokutai() {
-            const isChecked = document.getElementById('tokutai-check').checked;
-            if (isChecked) {
-                const randomIndex = Math.floor(Math.random() * TOKUTAI_AMOUNTS.length);
-                currentTokutaiDiscount = TOKUTAI_AMOUNTS[randomIndex];
-            } else {
-                currentTokutaiDiscount = 0;
-            }
-            calculate();
-        }
-
         // ==========================================
         // メイン計算処理
         // ==========================================
@@ -481,7 +465,7 @@
             // 1. 入力取得
             const courseId = document.querySelector('input[name="course"]:checked').value;
             const admission = document.querySelector('input[name="admission"]:checked').value;
-            const isTokutai = document.getElementById('tokutai-check').checked;
+            const tokutaiDiscount = parseInt(document.querySelector('input[name="tokutai"]:checked').value, 10);
             const isJikei = document.getElementById('jikei-check').checked;
             const isManabi = document.getElementById('manabi-check').checked;
             const paymentType = document.querySelector('input[name="payment"]:checked').value;
@@ -507,7 +491,6 @@
             }
 
             // 4. 学費減免計算（特待生、滋慶学園、学びなおし）
-            let tokutaiDiscount = isTokutai ? currentTokutaiDiscount : 0;
             let jikeiDiscount = isJikei ? JIKEI_DISCOUNT : 0;
             let manabiDiscount = isManabi ? MANABI_DISCOUNT : 0;
             let totalDiscount = tokutaiDiscount + jikeiDiscount + manabiDiscount;
@@ -522,30 +505,29 @@
             if (paymentType === '1') {
                 tuitionPay1 = netTuition;
                 tuitionPay2 = 0;
-                document.getElementById('timeline-step4').style.display = 'none';
+                document.getElementById('timeline-step3').style.display = 'none';
                 document.getElementById('dt-tuition-label').innerText = '一括分';
             } else {
                 tuitionPay1 = Math.floor(netTuition / 2);
                 tuitionPay2 = netTuition - tuitionPay1;
-                document.getElementById('timeline-step4').style.display = 'block';
-                document.getElementById('dt-tuition-label').innerText = '前期分';
+                document.getElementById('timeline-step3').style.display = 'block';
+                document.getElementById('dt-tuition-label').innerText = '1回目';
             }
 
-            const pay1 = admissionFee;               // ①合格後2週間以内（入学金）
-            const pay2 = tuitionPay1;                // ②合格後4週間以内（学費前期）
-            const pay3 = expenses;                   // ③3月中旬（諸経費）
-            const pay4 = tuitionPay2;                // ④8月（学費後期分）
+            const pay1 = admissionFee + tuitionPay1; // ①合格後2週間以内（入学金＋学費1回目）
+            const pay2 = expenses;                   // ②3月中旬（諸経費）
+            const pay3 = tuitionPay2;                // ③8月（学費2回目）
 
             // ==========================================
             // 入学前と入学後のキャッシュフロー分離
             // ==========================================
 
             // 【初年度総額】の計算と表示
-            const grandTotal = senkoFee + pay1 + pay2 + pay3 + pay4;
+            const grandTotal = senkoFee + pay1 + pay2 + pay3;
             document.getElementById('res-grand-total').innerText = formatCurrency(grandTotal);
 
-            // 【入学前】の準備額（選考料 + 入学金 + 学費前期 + 諸経費）
-            const preEnrollmentTotal = senkoFee + pay1 + pay2 + pay3;
+            // 【入学前】の準備額（選考料 + 入学金 + 学費1回目 + 諸経費）
+            const preEnrollmentTotal = senkoFee + pay1 + pay2;
             document.getElementById('res-pre-total').innerText = formatCurrency(preEnrollmentTotal);
 
             // 【入学後】の資金計画（後期学費に向けて）
@@ -560,10 +542,10 @@
             } else {
                 postEnrollmentContent.innerHTML = `
                     <div class="text-[11px] text-gray-500 mb-1">
-                        1年生の8月に、以下の後期学費をご納入いただきます。
+                        1年生の8月に、以下の学費(2回目)をご納入いただきます。
                     </div>
                     <div class="flex items-baseline justify-end">
-                        <span class="text-4xl font-black text-teal-600 tracking-tight">${formatCurrency(pay4)}</span>
+                        <span class="text-4xl font-black text-teal-600 tracking-tight">${formatCurrency(pay3)}</span>
                         <span class="text-sm font-bold text-gray-600 ml-1">円</span>
                     </div>
                 `;
@@ -572,7 +554,7 @@
             // ==========================================
             // スケジュール明細のDOM更新
             // ==========================================
-            document.getElementById('dt-admission-fee').innerText = formatCurrency(pay1) + "円";
+            document.getElementById('dt-admission-fee').innerText = formatCurrency(admissionFee) + "円";
             
             document.getElementById('dt-tuition-1').innerText = formatCurrency(tuitionPay1) + "円";
             
@@ -596,12 +578,12 @@
                 discountArea.style.display = 'none';
             }
 
-            document.getElementById('dt-pay-2').innerText = formatCurrency(pay2) + "円";
+            document.getElementById('dt-pay-1').innerText = formatCurrency(pay1) + "円";
             
-            document.getElementById('dt-expenses').innerText = formatCurrency(pay3) + "円";
+            document.getElementById('dt-expenses').innerText = "約" + formatCurrency(pay2) + "円";
 
             if (paymentType === '2') {
-                document.getElementById('dt-pay-4').innerText = formatCurrency(pay4) + "円";
+                document.getElementById('dt-pay-3').innerText = formatCurrency(pay3) + "円";
             }
         }
 
