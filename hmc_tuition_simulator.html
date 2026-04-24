@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
@@ -391,8 +391,7 @@
                 <!-- 2年生以降の案内 -->
                 <div class="mt-4 text-xs text-gray-600 bg-gray-50 p-4 rounded-xl border border-gray-200 leading-relaxed shadow-inner">
                     <strong class="text-gray-800 text-sm flex items-center mb-1"><svg class="w-4 h-4 mr-1 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM15.05 15.05a1 1 0 01-1.414 0l-.707-.707a1 1 0 011.414-1.414l.707.707a1 1 0 010 1.414zM10 18a1 1 0 01-1-1v-1a1 1 0 112 0v1a1 1 0 01-1 1zM5.657 15.657a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM4 10a1 1 0 01-1 1H2a1 1 0 110-2h1a1 1 0 011 1zM6.343 5.757a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414l.707.707z"></path></svg> 2年次以降に向けて</strong>
-                    1年生の8月に学費(2回目)を納入いただいた後、次は<strong class="text-blue-600 font-bold">1月〜2月頃に「2年生の学費(1回目)＋諸経費」</strong>の納入タイミングがやってきます。<br>
-                    入学後も、年間を通して学費や生活費の計画的なやりくりが大切になります。
+                    初年度の学費をご納入いただいた後、次は<strong class="text-blue-600 font-bold">進級前に2年生の学費・諸経費の納入予定</strong>となります。
                 </div>
             </div>
 
@@ -531,15 +530,13 @@
             document.getElementById('res-pre-total').innerText = formatCurrency(preEnrollmentTotal);
 
             // 【入学後】の資金計画（後期学費に向けて）
+            const postEnrollmentCard = document.getElementById('post-enrollment-card');
             const postEnrollmentContent = document.getElementById('post-enrollment-content');
             
             if (paymentType === '1') {
-                postEnrollmentContent.innerHTML = `
-                    <div class="text-sm text-green-700 font-bold bg-green-50 p-3 rounded-lg text-center border border-green-200">
-                        初年度の学費は完納済みです！<br>入学後の初年度学費の支払いはありません✨
-                    </div>
-                `;
+                postEnrollmentCard.style.display = 'none';
             } else {
+                postEnrollmentCard.style.display = 'block';
                 postEnrollmentContent.innerHTML = `
                     <div class="text-[11px] text-gray-500 mb-1">
                         1年生の8月に、以下の学費(2回目)をご納入いただきます。
